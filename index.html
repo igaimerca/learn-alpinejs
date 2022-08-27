@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alpinejs course by Traversy</title>
+    <script defer src="https://unpkg.com/@alpinejs/mask@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
+    <style>
+        [x-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="p-3">
+        <h1 class="text-2xl my-5 font-bold text-center">Alpine.js Demo</h1>
+        <div class="space-y-4" x-data="{
+            open: false, 
+            name: 'Aime',
+            search: '',
+            posts: [
+            { title: 'post 1'},
+            { title: 'post 2'},
+            { title: 'post 3'},
+            ]
+        }" x-cloak>
+            <button :class="open ? 'bg-blue-800' : 'bg-slate-700'" x-on:click="open = !open"
+                class="text-white px-4 py-2 rounded-xl">
+                Toggle
+            </button>
+            <div x-show="open" x-transition>
+                <p class="bg-gray-200 p-3">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo, nam
+                    excepturi. Corrupti tempore, deserunt recusandae aspernatur sit
+                    adipisci at, voluptatem aperiam excepturi soluta impedit molestiae,
+                    facilis error totam nulla quaerat?
+                </p>
+                <div class="my-4">
+                    The value of name is <span class="font-bold" x-text="name"></span>
+                </div>
+            </div>
+            <div x-effect="console.log(open)">
+                <input type="text" class="border p-2 w-full mb-2 mt-6" placeholder="search for something..." />
+                <b>Searching for:</b><span x-text="search"></span>
+                <template x-if="open">
+                    <div class="bg-gray-50 p-2 mt-8">
+                        Template based on condition
+                    </div>
+                </template>
+                <h3 class="text-2xl mt-6 mb-3 font-bold">Posts</h3>
+                <template x-for="post in posts">
+                    <div x-text="post.title"></div>
+                </template>
+                <button @click="posts.push({ title: 'New title'})"
+                    class="my-3 text-white px-4 py-2 rounded-xl bg-blue-700">Add post</button>
+                <div class="my-6">
+                    <div x-ref="text">
+                        Click to remove me!
+                    </div>
+                    <button @click="$refs.text.remove()" class="bg-black text-white p-2 rounded-lg">Click</button>
+                </div>
+            </div>
+
+            <!-- x-html -->
+            <div x-html="(await axios.get('./partial.html')).data"></div>
+            <!-- $el -->
+            <button class="mt-4 p-4 border" x-on:click="$el.innerHTML = 'Hello World'">Replace text</button>
+
+            <div x-init="$watch('posts', value => console.log(value))"></div>
+
+            <!-- $dispatch -->
+            <div @notify="alert('You have been notified!')">
+                <button @click="$dispatch('notify')" class="bg-green-700 text-white p-2 my-2 rounded-lg">Notify</button>
+            </div>
+            <!-- $data -->
+            <button @click="getLatestPost($data.posts)" class="bg-orange-800 text-white mt-6 p-2 rounded-lg">Get latest
+                post</button>
+        </div>
+        <div class="mt-6" x-data>
+            <input class="outline-none p-2 text-lg border border-2 border-gray-300" x-mask="99/99/9999" placeholder="MM/DD/YYYY">
+            <input class="outline-none p-2 text-lg border border-2 border-gray-300" type="text" x-mask="999-999-999" placeholder="xxx-xxx-xxx">
+        </div>
+
+        <footer x-data>
+            <div class="" x-text="name"></div>
+            <p class="text-center mt-10 text-lg">Copyright &copy; <span x-text="new Date().getFullYear()"></span></p>
+        </footer>
+    </div>
+    <script>
+        const getLatestPost = (posts) => {
+            console.log(posts.slice(-1).pop())
+        }
+    </script>
+</body>
+
+</html>
